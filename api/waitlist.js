@@ -29,7 +29,7 @@ export default async function handler(req, res) {
             email: email
           },
           '服务类型': {
-            rich_text: [{ text: { content: service } }]
+            select: { name: service }
           },
           '联系方式': {
             rich_text: [{ text: { content: contact || '' } }]
