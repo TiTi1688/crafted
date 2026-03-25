@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Crafted — Your Creative Team</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #0f0d0b;
+    --cream: #f5f0e8;
+    --warm: #e8dfc8;
+    --accent: #c9572a;
+    --muted: #7a7060;
+    --card: #fffdf8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--cream);
+    color: var(--ink);
+    font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+    font-weight: 300;
+    overflow-x: hidden;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 999;
+    opacity: 0.5;
+  }
+
+  /* ── LANGUAGE SWITCHER ── */
+  .lang-switcher {
+    display: flex;
+    gap: 2px;
+    background: rgba(15,13,11,0.08);
+    border-radius: 3px;
+    padding: 3px;
+  }
+
+  .lang-btn {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.15s;
+    font-family: inherit;
+  }
+
+  .lang-btn.active {
+    background: var(--ink);
+    color: var(--cream);
+  }
+
+  .lang-btn:hover:not(.active) {
+    background: rgba(15,13,11,0.1);
+    color: var(--ink);
+  }
+
+  /* ── NAV ── */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.6rem 4rem;
+    border-bottom: 1px solid rgba(15,13,11,0.1);
+    position: sticky;
+    top: 0;
+    background: rgba(245,240,232,0.93);
+    backdrop-filter: blur(14px);
+    z-index: 100;
+    gap: 1rem;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    letter-spacing: -0.03em;
+    flex-shrink: 0;
+  }
+  .logo span { color: var(--accent); }
+
+  .nav-cta {
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.55rem 1.3rem;
+    border-radius: 2px;
+    font-size: 0.78rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: background 0.2s;
+    white-space: nowrap;
+  }
+  .nav-cta:hover { background: var(--accent); }
+
+  /* ── HERO ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 88vh;
+    padding: 0 4rem;
+    align-items: center;
+    gap: 4rem;
+  }
+
+  .hero-left { padding: 4rem 0; }
+
+  .eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+  .eyebrow::before {
+    content: '';
+    width: 24px; height: 1px;
+    background: var(--accent);
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2.8rem, 4.5vw, 5rem);
+    font-weight: 900;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  h1 em { font-style: italic; color: var(--accent); }
+
+  .hero-desc {
+    font-size: 1.05rem;
+    line-height: 1.75;
+    color: var(--muted);
+    max-width: 44ch;
+    margin-bottom: 2.5rem;
+  }
+
+  .hero-cta-row {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    padding: 0.9rem 2rem;
+    font-family: inherit;
+    font-size: 0.88rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+    transition: all 0.2s;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .btn-primary:hover { background: #a8441e; transform: translateY(-1px); }
+
+  .hero-note { font-size: 0.8rem; color: var(--muted); }
+
+  /* HERO CARDS */
+  .hero-right {
+    position: relative;
+    height: 500px;
+  }
+
+  .service-card {
+    position: absolute;
+    background: var(--card);
+    border: 1px solid rgba(15,13,11,0.12);
+    border-radius: 6px;
+    padding: 1.8rem;
+    box-shadow: 0 4px 24px rgba(15,13,11,0.06);
+  }
+  .service-card:nth-child(1) { width: 260px; top: 40px; left: 20px; animation: floatA 6s ease-in-out infinite; }
+  .service-card:nth-child(2) { width: 240px; top: 160px; right: 10px; animation: floatB 7s ease-in-out infinite; }
+  .service-card:nth-child(3) { width: 220px; bottom: 60px; left: 60px; animation: floatC 5.5s ease-in-out infinite; }
+
+  @keyframes floatA { 0%,100%{transform:rotate(-3deg) translateY(0)} 50%{transform:rotate(-3deg) translateY(-10px)} }
+  @keyframes floatB { 0%,100%{transform:rotate(2deg) translateY(0)} 50%{transform:rotate(2deg) translateY(-8px)} }
+  @keyframes floatC { 0%,100%{transform:rotate(-1deg) translateY(0)} 50%{transform:rotate(-1deg) translateY(-12px)} }
+
+  .card-icon { width:40px; height:40px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:1.2rem; margin-bottom:1rem; }
+  .card-icon.orange { background:#fde8df; }
+  .card-icon.blue { background:#dfeafde0; }
+  .card-icon.green { background:#dff5e8; }
+
+  .service-card h3 { font-family:'Playfair Display',serif; font-size:1rem; font-weight:700; margin-bottom:0.4rem; }
+  .service-card p { font-size:0.8rem; color:var(--muted); line-height:1.5; }
+
+  /* MARQUEE */
+  .marquee-strip {
+    border-top: 1px solid rgba(15,13,11,0.1);
+    border-bottom: 1px solid rgba(15,13,11,0.1);
+    background: var(--ink);
+    color: var(--cream);
+    padding: 0.8rem 0;
+    overflow: hidden;
+    white-space: nowrap;
+  }
+  .marquee-inner { display:inline-flex; animation:marquee 22s linear infinite; gap:3.5rem; }
+  .marquee-inner span { font-size:0.72rem; font-weight:500; letter-spacing:0.12em; text-transform:uppercase; opacity:0.65; }
+  .marquee-inner .dot { color:var(--accent); opacity:1; }
+  @keyframes marquee { from{transform:translateX(0)} to{transform:translateX(-50%)} }
+
+  /* SERVICES */
+  .services { padding: 7rem 4rem; }
+
+  .section-label {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .section-label::before { content:''; width:20px; height:1px; background:var(--accent); display:inline-block; }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(2rem, 3.5vw, 3rem);
+    font-weight: 900;
+    letter-spacing: -0.02em;
+    margin-bottom: 4rem;
+    max-width: 22ch;
+    line-height: 1.1;
+  }
+
+  .services-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: rgba(15,13,11,0.1);
+    border: 1.5px solid rgba(15,13,11,0.1);
+  }
+
+  .service-item {
+    background: var(--cream);
+    padding: 2.5rem;
+    transition: background 0.2s;
+  }
+  .service-item:hover { background: var(--card); }
+
+  .service-num {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: rgba(15,13,11,0.07);
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .service-item h3 { font-family:'Playfair Display',serif; font-size:1.1rem; font-weight:700; margin-bottom:0.6rem; }
+  .service-item p { font-size:0.87rem; color:var(--muted); line-height:1.65; }
+
+  .service-tag {
+    display:inline-block;
+    margin-top:1rem;
+    font-size:0.68rem;
+    font-weight:500;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--accent);
+    border:1px solid var(--accent);
+    padding:0.18rem 0.55rem;
+    border-radius:2px;
+  }
+
+  /* PROCESS */
+  .process {
+    padding: 7rem 4rem;
+    background: var(--ink);
+    color: var(--cream);
+  }
+  .process .section-label { color:var(--accent); }
+  .process .section-label::before { background:var(--accent); }
+
+  .process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3rem;
+    margin-top: 4rem;
+  }
+
+  .step { position:relative; }
+  .step::after { content:'→'; position:absolute; right:-1.5rem; top:0.1rem; font-size:1.2rem; color:rgba(245,240,232,0.2); }
+  .step:last-child::after { display:none; }
+
+  .step-num { font-family:'Playfair Display',serif; font-size:3rem; font-weight:900; color:var(--accent); line-height:1; margin-bottom:1rem; }
+  .step h3 { font-family:'Playfair Display',serif; font-size:1.05rem; margin-bottom:0.6rem; }
+  .step p { font-size:0.84rem; line-height:1.65; color:rgba(245,240,232,0.5); }
+
+  /* WAITLIST */
+  .waitlist {
+    padding: 8rem 4rem;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6rem;
+    align-items: center;
+  }
+
+  .waitlist-left .section-title { margin-bottom:1.5rem; }
+  .waitlist-left p { font-size:1rem; color:var(--muted); line-height:1.75; max-width:40ch; }
+
+  .counter-row { display:flex; gap:3rem; margin-top:2.5rem; }
+  .counter-item span { display:block; font-family:'Playfair Display',serif; font-size:2.4rem; font-weight:900; color:var(--accent); line-height:1; }
+  .counter-item small { font-size:0.72rem; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; }
+
+  .waitlist-form {
+    background: var(--card);
+    border: 1px solid rgba(15,13,11,0.1);
+    border-radius: 6px;
+    padding: 3rem;
+    box-shadow: 0 8px 40px rgba(15,13,11,0.06);
+  }
+
+  .waitlist-form h3 { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; margin-bottom:0.4rem; }
+  .waitlist-form .sub { font-size:0.85rem; color:var(--muted); margin-bottom:2rem; }
+
+  .form-group { margin-bottom:1.2rem; }
+  .form-group label { display:block; font-size:0.72rem; font-weight:500; letter-spacing:0.08em; text-transform:uppercase; color:var(--muted); margin-bottom:0.4rem; }
+
+  .form-group input,
+  .form-group select {
+    width:100%; padding:0.8rem 1rem;
+    border:1px solid rgba(15,13,11,0.15);
+    border-radius:3px;
+    background:var(--cream);
+    font-family:inherit; font-size:0.9rem;
+    color:var(--ink); outline:none;
+    transition:border-color 0.2s;
+    appearance:none;
+  }
+  .form-group input:focus, .form-group select:focus { border-color:var(--accent); }
+  .form-group input::placeholder { color:var(--muted); opacity:0.55; }
+
+  .btn-submit {
+    width:100%; padding:1rem;
+    background:var(--accent); color:white;
+    border:none; border-radius:3px;
+    font-family:inherit; font-size:0.88rem; font-weight:500;
+    letter-spacing:0.06em; text-transform:uppercase;
+    cursor:pointer; transition:all 0.2s; margin-top:0.5rem;
+  }
+  .btn-submit:hover { background:#a8441e; transform:translateY(-1px); }
+
+  .form-note { font-size:0.75rem; color:var(--muted); text-align:center; margin-top:1rem; line-height:1.5; }
+
+  /* SUCCESS */
+  .success-state { display:none; text-align:center; padding:2rem 0; }
+  .success-state .check { font-size:3rem; margin-bottom:1rem; }
+  .success-state h3 { font-family:'Playfair Display',serif; font-size:1.5rem; font-weight:700; margin-bottom:0.5rem; }
+  .success-state p { font-size:0.9rem; color:var(--muted); line-height:1.65; }
+  .position-badge { display:inline-block; background:var(--accent); color:white; padding:0.3rem 1rem; border-radius:20px; font-size:0.85rem; font-weight:500; margin:1rem 0; }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid rgba(15,13,11,0.1);
+    padding: 2.5rem 4rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  footer p { font-size:0.8rem; color:var(--muted); }
+
+  /* FADE */
+  .fade-up { opacity:0; transform:translateY(28px); animation:fadeUp 0.7s ease forwards; }
+  .fade-up:nth-child(1){animation-delay:0.1s}
+  .fade-up:nth-child(2){animation-delay:0.25s}
+  .fade-up:nth-child(3){animation-delay:0.4s}
+  .fade-up:nth-child(4){animation-delay:0.5s}
+  @keyframes fadeUp { to{opacity:1;transform:translateY(0)} }
+
+  /* RESPONSIVE */
+  @media (max-width:900px) {
+    nav { padding:1.4rem 1.5rem; }
+    .hero { grid-template-columns:1fr; padding:3rem 1.5rem; min-height:auto; }
+    .hero-right { display:none; }
+    .services { padding:4rem 1.5rem; }
+    .services-grid { grid-template-columns:1fr; }
+    .process { padding:4rem 1.5rem; }
+    .process-steps { grid-template-columns:1fr 1fr; }
+    .waitlist { grid-template-columns:1fr; padding:4rem 1.5rem; gap:3rem; }
+    footer { padding:2rem 1.5rem; flex-direction:column; gap:0.5rem; text-align:center; }
+    .nav-right { gap:0.8rem; }
+    .nav-cta { display:none; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <div class="logo">Craf<span>t</span>ed</div>
+  <div class="nav-right">
+    <div class="lang-switcher">
+      <button class="lang-btn active" onclick="setLang('zh')">中文</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ja')">日本語</button>
+    </div>
+    <a href="#waitlist" class="nav-cta" data-i18n="nav_cta"></a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="eyebrow fade-up" data-i18n="hero_eyebrow"></div>
+    <h1 class="fade-up" data-i18n-html="hero_h1"></h1>
+    <p class="hero-desc fade-up" data-i18n="hero_desc"></p>
+    <div class="hero-cta-row fade-up">
+      <a href="#waitlist" class="btn-primary" data-i18n="hero_cta"></a>
+      <span class="hero-note" data-i18n="hero_note"></span>
+    </div>
+  </div>
+
+  <div class="hero-right">
+    <div class="service-card">
+      <div class="card-icon orange">🎬</div>
+      <h3 data-i18n="card1_title"></h3>
+      <p data-i18n="card1_desc"></p>
+    </div>
+    <div class="service-card">
+      <div class="card-icon blue">⚡</div>
+      <h3 data-i18n="card2_title"></h3>
+      <p data-i18n="card2_desc"></p>
+    </div>
+    <div class="service-card">
+      <div class="card-icon green">✦</div>
+      <h3 data-i18n="card3_title"></h3>
+      <p data-i18n="card3_desc"></p>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE (static multilingual mix) -->
+<div class="marquee-strip">
+  <div class="marquee-inner" id="marquee-inner"></div>
+</div>
+
+<!-- SERVICES -->
+<section class="services" id="services">
+  <div class="section-label" data-i18n="services_label"></div>
+  <h2 class="section-title" data-i18n="services_title"></h2>
+  <div class="services-grid">
+    <div class="service-item">
+      <div class="service-num">01</div>
+      <h3 data-i18n="s1_title"></h3>
+      <p data-i18n="s1_desc"></p>
+      <span class="service-tag" data-i18n="tag_popular"></span>
+    </div>
+    <div class="service-item">
+      <div class="service-num">02</div>
+      <h3 data-i18n="s2_title"></h3>
+      <p data-i18n="s2_desc"></p>
+      <span class="service-tag" data-i18n="tag_demand"></span>
+    </div>
+    <div class="service-item">
+      <div class="service-num">03</div>
+      <h3 data-i18n="s3_title"></h3>
+      <p data-i18n="s3_desc"></p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">04</div>
+      <h3 data-i18n="s4_title"></h3>
+      <p data-i18n="s4_desc"></p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">05</div>
+      <h3 data-i18n="s5_title"></h3>
+      <p data-i18n="s5_desc"></p>
+    </div>
+    <div class="service-item">
+      <div class="service-num">06</div>
+      <h3 data-i18n="s6_title"></h3>
+      <p data-i18n="s6_desc"></p>
+      <span class="service-tag" data-i18n="tag_custom"></span>
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section class="process">
+  <div class="section-label" data-i18n="process_label"></div>
+  <h2 class="section-title" style="color:var(--cream);max-width:none;" data-i18n="process_title"></h2>
+  <div class="process-steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3 data-i18n="p1_title"></h3>
+      <p data-i18n="p1_desc"></p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3 data-i18n="p2_title"></h3>
+      <p data-i18n="p2_desc"></p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3 data-i18n="p3_title"></h3>
+      <p data-i18n="p3_desc"></p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3 data-i18n="p4_title"></h3>
+      <p data-i18n="p4_desc"></p>
+    </div>
+  </div>
+</section>
+
+<!-- WAITLIST -->
+<section class="waitlist" id="waitlist">
+  <div class="waitlist-left">
+    <div class="section-label" data-i18n="waitlist_label"></div>
+    <h2 class="section-title" data-i18n="waitlist_title"></h2>
+    <p data-i18n="waitlist_desc"></p>
+    <div class="counter-row">
+      <div class="counter-item">
+        <span id="count">--</span>
+        <small data-i18n="counter_joined"></small>
+      </div>
+      <div class="counter-item">
+        <span>50</span>
+        <small data-i18n="counter_spots"></small>
+      </div>
+      <div class="counter-item">
+        <span>30%</span>
+        <small data-i18n="counter_discount"></small>
+      </div>
+    </div>
+  </div>
+
+  <div class="waitlist-form">
+    <div id="form-state">
+      <h3 data-i18n="form_title"></h3>
+      <p class="sub" data-i18n="form_sub"></p>
+      <div class="form-group">
+        <label data-i18n="label_name"></label>
+        <input type="text" id="inp-name" data-i18n-placeholder="ph_name">
+      </div>
+      <div class="form-group">
+        <label data-i18n="label_email"></label>
+        <input type="email" id="inp-email" placeholder="hello@example.com">
+      </div>
+      <div class="form-group">
+        <label data-i18n="label_service"></label>
+        <select id="inp-service">
+          <option value="" data-i18n="opt_placeholder"></option>
+          <option data-i18n="opt1"></option>
+          <option data-i18n="opt2"></option>
+          <option data-i18n="opt3"></option>
+          <option data-i18n="opt4"></option>
+          <option data-i18n="opt5"></option>
+          <option data-i18n="opt6"></option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label data-i18n="label_contact"></label>
+        <input type="text" id="inp-contact" data-i18n-placeholder="ph_contact">
+      </div>
+      <button class="btn-submit" onclick="submitForm()" data-i18n="btn_submit"></button>
+      <p class="form-note" data-i18n="form_note"></p>
+    </div>
+    <div class="success-state" id="success-state">
+      <div class="check">🎉</div>
+      <h3 data-i18n="success_title"></h3>
+      <div class="position-badge" id="position-badge"></div>
+      <p data-i18n="success_desc"></p>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="logo">Craf<span>t</span>ed</div>
+  <p data-i18n="footer_copy"></p>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════
+//  TRANSLATIONS
+// ═══════════════════════════════════════════
+const T = {
+  zh: {
+    nav_cta: "加入等待名单",
+    hero_eyebrow: "按需创意服务",
+    hero_h1: "你的想法，<br><em>我们来实现</em>",
+    hero_desc: "无论是视频剪辑、AI 自动化、平面设计还是网站开发——Crafted 是你专属的创意执行团队，告诉我们你需要什么，我们来搞定。",
+    hero_cta: "申请早期访问",
+    hero_note: "✦ 名额有限，先到先得",
+    card1_title: "视频剪辑",
+    card1_desc: "短视频、Vlog、广告宣传片，专业级别的剪辑与调色。",
+    card2_title: "AI 自动化",
+    card2_desc: "用 AI 工作流替代重复劳动，让你的业务 24 小时运转。",
+    card3_title: "任何你需要的",
+    card3_desc: "网站、文案、设计、数据分析……提出来，我们来实现。",
+    marquee: ["视频剪辑","AI 自动化","品牌设计","网站开发","内容创作","数据分析","社交媒体运营","文案策划"],
+    services_label: "我们能做什么",
+    services_title: "每一件事，都认真做好",
+    s1_title: "视频制作与剪辑", s1_desc: "从素材整理到成片输出，短视频、品牌宣传片、课程视频，全程跟进，高效交付。",
+    s2_title: "AI 工作流搭建", s2_desc: "用 n8n、Make、Zapier 等工具打通你的业务系统，让繁琐的重复工作自动完成。",
+    s3_title: "品牌视觉设计", s3_desc: "Logo、VI 系统、社交媒体素材、活动海报，为你的品牌建立完整的视觉语言。",
+    s4_title: "网站与落地页", s4_desc: "从设计到上线，快速搭建专业网站、产品落地页，帮助你转化更多客户。",
+    s5_title: "内容与文案策划", s5_desc: "公众号文章、小红书笔记、邮件营销、产品描述，让你的文字真正触动用户。",
+    s6_title: "你想到的任何事", s6_desc: "有特殊需求？告诉我们，Crafted 的使命就是把你脑海中的想法变成现实。",
+    tag_popular: "热门", tag_demand: "高需求", tag_custom: "灵活定制",
+    process_label: "合作流程",
+    process_title: "简单四步，开始合作",
+    p1_title: "告诉我们需求", p1_desc: "填写简单的表单，描述你的项目——不需要完美，有想法就够了。",
+    p2_title: "我们来提案", p2_desc: "24 小时内给出方案和报价，透明清晰，没有隐藏费用。",
+    p3_title: "执行与沟通", p3_desc: "实时同步进度，你随时可以提意见，我们快速迭代调整。",
+    p4_title: "交付成果", p4_desc: "按时交付高质量的成品，满意为止，不满意继续改。",
+    waitlist_label: "等待名单",
+    waitlist_title: "成为最早用上 Crafted 的人",
+    waitlist_desc: "我们正在进行限量内测，早期用户享有优先排队权、折扣价格以及与团队直接沟通的机会。",
+    counter_joined: "已加入", counter_spots: "早鸟名额", counter_discount: "早鸟折扣",
+    form_title: "申请早期访问",
+    form_sub: "填写以下信息，我们会在服务上线时第一时间通知你。",
+    label_name: "你的姓名", ph_name: "张三",
+    label_email: "电子邮箱",
+    label_service: "你最感兴趣的服务",
+    opt_placeholder: "请选择...",
+    opt1: "视频剪辑 / 制作", opt2: "AI 工作流自动化", opt3: "品牌视觉设计",
+    opt4: "网站 / 落地页", opt5: "内容与文案", opt6: "其他",
+    label_contact: "WeChat / 微信号（可选）", ph_contact: "wechat_id",
+    btn_submit: "🎯 加入等待名单",
+    form_note: "我们不会发送垃圾邮件，随时可以退出。",
+    success_title: "你已成功加入！",
+    success_desc: "我们会在早期访问开放时第一时间联系你，感谢你对 Crafted 的支持！",
+    success_position: "你是第 {n} 位",
+    err_name: "请输入你的姓名", err_email: "请输入有效的邮箱地址",
+    err_service: "请选择你感兴趣的服务", err_dup: "你已经在名单上了！",
+    footer_copy: "© 2025 Crafted. 让每一个创意都有价值。",
+  },
+
+  en: {
+    nav_cta: "Join Waitlist",
+    hero_eyebrow: "On-demand creative services",
+    hero_h1: "Your vision,<br><em>we build it</em>",
+    hero_desc: "Whether it's video editing, AI automation, brand design or web development — Crafted is your dedicated creative team. Tell us what you need, and we'll make it happen.",
+    hero_cta: "Request Early Access",
+    hero_note: "✦ Limited spots — first come, first served",
+    card1_title: "Video Editing",
+    card1_desc: "Short-form, Vlogs, brand films — professional cuts and color grade delivered fast.",
+    card2_title: "AI Automation",
+    card2_desc: "Replace repetitive tasks with AI workflows that keep your business running 24/7.",
+    card3_title: "Anything You Need",
+    card3_desc: "Websites, copy, design, data — if you can imagine it, we can build it.",
+    marquee: ["Video Editing","AI Automation","Brand Design","Web Development","Content Creation","Data Analysis","Social Media","Copywriting"],
+    services_label: "What we do",
+    services_title: "Every task, done with care",
+    s1_title: "Video Production & Editing", s1_desc: "From raw footage to final cut — short-form, brand films, and course videos delivered on time, every time.",
+    s2_title: "AI Workflow Automation", s2_desc: "We connect your tools with n8n, Make, and Zapier so repetitive work happens automatically.",
+    s3_title: "Brand Visual Design", s3_desc: "Logo, identity systems, social assets, event posters — a complete visual language for your brand.",
+    s4_title: "Websites & Landing Pages", s4_desc: "Design to launch, fast. Professional sites and high-converting landing pages, ready to go.",
+    s5_title: "Content & Copywriting", s5_desc: "Blog posts, email campaigns, product descriptions — words that actually move people.",
+    s6_title: "Anything You Can Think Of", s6_desc: "Have something unique? Tell us. Crafted exists to turn whatever you're imagining into reality.",
+    tag_popular: "Popular", tag_demand: "High Demand", tag_custom: "Custom",
+    process_label: "How it works",
+    process_title: "Four steps to get started",
+    p1_title: "Tell us what you need", p1_desc: "Fill in a quick brief — no need for it to be perfect. A rough idea is enough.",
+    p2_title: "We'll send a proposal", p2_desc: "Within 24 hours we'll share a plan and quote, transparent and no hidden fees.",
+    p3_title: "Execution & feedback", p3_desc: "We keep you updated in real time. Give notes anytime and we iterate fast.",
+    p4_title: "Delivery", p4_desc: "We deliver on schedule and keep going until you're satisfied.",
+    waitlist_label: "Waitlist",
+    waitlist_title: "Be among the first to use Crafted",
+    waitlist_desc: "We're running a limited early access program. Early members get priority access, discounted pricing, and direct team communication.",
+    counter_joined: "Joined", counter_spots: "Early spots", counter_discount: "Early discount",
+    form_title: "Request Early Access",
+    form_sub: "Fill in your details and we'll notify you the moment we launch.",
+    label_name: "Your name", ph_name: "Jane Doe",
+    label_email: "Email address",
+    label_service: "Service you're most interested in",
+    opt_placeholder: "Select one...",
+    opt1: "Video Editing / Production", opt2: "AI Workflow Automation", opt3: "Brand Visual Design",
+    opt4: "Website / Landing Page", opt5: "Content & Copywriting", opt6: "Other",
+    label_contact: "WeChat / Telegram (optional)", ph_contact: "@handle",
+    btn_submit: "🎯 Join the Waitlist",
+    form_note: "No spam, ever. Unsubscribe at any time.",
+    success_title: "You're in!",
+    success_desc: "We'll reach out as soon as early access opens. Thank you for your interest in Crafted!",
+    success_position: "You are #{n}",
+    err_name: "Please enter your name", err_email: "Please enter a valid email",
+    err_service: "Please select a service", err_dup: "You're already on the list!",
+    footer_copy: "© 2025 Crafted. Every idea deserves to exist.",
+  },
+
+  ja: {
+    nav_cta: "ウェイトリストに登録",
+    hero_eyebrow: "オンデマンド・クリエイティブサービス",
+    hero_h1: "あなたのアイデアを、<br><em>形にします</em>",
+    hero_desc: "動画編集、AI自動化、ブランドデザイン、Web開発——Crafted はあなた専属のクリエイティブチームです。やってほしいことを教えてください。",
+    hero_cta: "早期アクセスを申し込む",
+    hero_note: "✦ 枠数限定・先着順",
+    card1_title: "動画編集",
+    card1_desc: "ショート動画・Vlog・ブランド映像。プロ品質の編集とカラーグレーディング。",
+    card2_title: "AI 自動化",
+    card2_desc: "AIワークフローで繰り返し作業をなくし、ビジネスを24時間稼働させます。",
+    card3_title: "なんでも",
+    card3_desc: "Web制作・コピー・データ分析……思いついたことを教えてください。",
+    marquee: ["動画編集","AI自動化","ブランドデザイン","Web開発","コンテンツ制作","データ分析","SNS運用","コピーライティング"],
+    services_label: "できること",
+    services_title: "すべての仕事を、丁寧に",
+    s1_title: "動画制作・編集", s1_desc: "素材整理から納品まで。ショート動画・ブランド映像・講座動画を高品質で届けます。",
+    s2_title: "AIワークフロー構築", s2_desc: "n8n、Make、Zapierで業務システムをつなぎ、繰り返し作業を自動化します。",
+    s3_title: "ブランドビジュアル", s3_desc: "ロゴ・VIシステム・SNS素材・イベントポスター。ブランドの視覚言語を構築します。",
+    s4_title: "WebサイトとLP", s4_desc: "設計から公開まで。プロ品質のサイトと高コンバージョンのLPを迅速に制作します。",
+    s5_title: "コンテンツ・コピー", s5_desc: "ブログ記事・メールマーケティング・商品説明。読んだ人が動くコピーを書きます。",
+    s6_title: "何でも相談を", s6_desc: "特別なニーズがあれば教えてください。Craftedの使命は、あなたのビジョンを現実にすること。",
+    tag_popular: "人気", tag_demand: "需要大", tag_custom: "カスタム",
+    process_label: "ご利用の流れ",
+    process_title: "4ステップで始める",
+    p1_title: "ご要望を教える", p1_desc: "簡単なフォームに記入するだけ。完璧でなくて大丈夫、アイデアがあれば十分です。",
+    p2_title: "提案をお送りします", p2_desc: "24時間以内にプランと見積もりをお届けします。透明な価格、隠れた費用なし。",
+    p3_title: "実行とフィードバック", p3_desc: "進捗をリアルタイムで共有。いつでもフィードバックをどうぞ。素早く修正します。",
+    p4_title: "納品", p4_desc: "スケジュール通りに高品質な成果物を納品。ご満足いただくまで対応します。",
+    waitlist_label: "ウェイトリスト",
+    waitlist_title: "Craftedの最初のユーザーになる",
+    waitlist_desc: "限定アーリーアクセスを実施中。早期登録者は優先アクセス、割引価格、チームとの直接対話の権利を得られます。",
+    counter_joined: "登録済み", counter_spots: "アーリー枠", counter_discount: "早期割引",
+    form_title: "早期アクセスを申し込む",
+    form_sub: "以下を記入してください。サービス開始時に最初にご連絡します。",
+    label_name: "お名前", ph_name: "山田 太郎",
+    label_email: "メールアドレス",
+    label_service: "最も興味のあるサービス",
+    opt_placeholder: "選択してください...",
+    opt1: "動画編集 / 制作", opt2: "AI自動化", opt3: "ブランドデザイン",
+    opt4: "Webサイト / LP", opt5: "コンテンツ・コピー", opt6: "その他",
+    label_contact: "LINE / WeChat（任意）", ph_contact: "ID or handle",
+    btn_submit: "🎯 ウェイトリストに登録",
+    form_note: "スパムは送りません。いつでも退会できます。",
+    success_title: "登録完了！",
+    success_desc: "アーリーアクセスが開放されたら、真っ先にご連絡します。Craftedへのご興味ありがとうございます！",
+    success_position: "{n}番目の登録者です",
+    err_name: "お名前を入力してください", err_email: "有効なメールアドレスを入力してください",
+    err_service: "サービスを選択してください", err_dup: "すでに登録済みです！",
+    footer_copy: "© 2025 Crafted. すべてのアイデアに、価値を。",
+  }
+};
+
+// ═══════════════════════════════════════════
+//  I18N ENGINE
+// ═══════════════════════════════════════════
+let currentLang = 'zh';
+
+function setLang(lang) {
+  currentLang = lang;
+  document.documentElement.lang = lang;
+
+  // Update button states
+  document.querySelectorAll('.lang-btn').forEach(btn => {
+    btn.classList.toggle('active', btn.textContent.trim() === { zh:'中文', en:'EN', ja:'日本語' }[lang]);
+  });
+
+  const t = T[lang];
+
+  // Text nodes
+  document.querySelectorAll('[data-i18n]').forEach(el => {
+    const key = el.getAttribute('data-i18n');
+    if (t[key] !== undefined) el.textContent = t[key];
+  });
+
+  // HTML nodes (for h1 with <em> and <br>)
+  document.querySelectorAll('[data-i18n-html]').forEach(el => {
+    const key = el.getAttribute('data-i18n-html');
+    if (t[key] !== undefined) el.innerHTML = t[key];
+  });
+
+  // Placeholders
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el => {
+    const key = el.getAttribute('data-i18n-placeholder');
+    if (t[key] !== undefined) el.placeholder = t[key];
+  });
+
+  // Marquee
+  buildMarquee(t.marquee);
+}
+
+function buildMarquee(items) {
+  const doubled = [...items, ...items];
+  const inner = document.getElementById('marquee-inner');
+  inner.innerHTML = doubled.map(item =>
+    `<span>${item}</span><span class="dot">◆</span>`
+  ).join('');
+}
+
+// ═══════════════════════════════════════════
+//  WAITLIST
+// ═══════════════════════════════════════════
+const KEY = 'crafted_waitlist_v2';
+let baseCount = 23;
+
+function getWaitlist() {
+  try { return JSON.parse(localStorage.getItem(KEY)) || []; } catch { return []; }
+}
+function saveWaitlist(list) {
+  localStorage.setItem(KEY, JSON.stringify(list));
+}
+
+function updateCounter() {
+  document.getElementById('count').textContent = baseCount;
+}
+
+async function submitForm() {
+  const t = T[currentLang];
+  const name = document.getElementById('inp-name').value.trim();
+  const email = document.getElementById('inp-email').value.trim();
+  const service = document.getElementById('inp-service').value;
+
+  if (!name) { alert(t.err_name); return; }
+  if (!email || !email.includes('@')) { alert(t.err_email); return; }
+  if (!service) { alert(t.err_service); return; }
+
+  const contact = document.getElementById('inp-contact').value.trim();
+  const list = getWaitlist();
+
+  if (list.find(e => e.email === email)) {
+    alert(t.err_dup);
+    return;
+  }
+
+  // Disable button & show loading
+  const btn = document.querySelector('.btn-submit');
+  const originalText = btn.textContent;
+  btn.textContent = '⏳ ...';
+  btn.disabled = true;
+
+  try {
+    const res = await fetch('/api/waitlist', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, service, contact, lang: currentLang })
+    });
+
+    if (!res.ok) throw new Error('API error');
+
+    // Save locally too
+    list.push({ name, email, service, contact, lang: currentLang, joinedAt: new Date().toISOString() });
+    saveWaitlist(list);
+
+    const position = 23 + list.length;
+    const posText = t.success_position.replace('{n}', position);
+    document.getElementById('position-badge').textContent = posText;
+    document.getElementById('form-state').style.display = 'none';
+    document.getElementById('success-state').style.display = 'block';
+
+    baseCount = position;
+    updateCounter();
+
+  } catch (err) {
+    btn.textContent = originalText;
+    btn.disabled = false;
+    alert('提交失败，请稍后再试。');
+  }
+}
+
+// ═══════════════════════════════════════════
+//  INIT
+// ═══════════════════════════════════════════
+window.addEventListener('load', () => {
+  const list = getWaitlist();
+  baseCount = Math.max(23, 23 + list.length);
+  updateCounter();
+
+  // Auto-detect language from browser
+  const browserLang = navigator.language.slice(0, 2);
+  const defaultLang = ['zh', 'en', 'ja'].includes(browserLang) ? browserLang : 'zh';
+  setLang(defaultLang);
+
+  // Live count bump
+  setTimeout(() => { baseCount++; updateCounter(); }, 4500);
+});
+</script>
+</body>
+</html>
