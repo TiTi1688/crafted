@@ -22,20 +22,17 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         parent: { database_id: process.env.NOTION_DB_ID },
         properties: {
-          'Name': {
+          '姓名': {
             title: [{ text: { content: name } }]
           },
-          'Email': {
+          '邮箱地址': {
             email: email
           },
-          'Service': {
+          '服务类型': {
             rich_text: [{ text: { content: service } }]
           },
-          'Contact': {
+          '联系方式': {
             rich_text: [{ text: { content: contact || '' } }]
-          },
-          'Language': {
-            rich_text: [{ text: { content: lang || 'zh' } }]
           }
         }
       })
