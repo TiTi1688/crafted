@@ -24,22 +24,7 @@ export default async function handler(req, res) {
         parent: { database_id: process.env.NOTION_DB_ID },
         properties: {
           Name: {
-            title: [{ text: { content: name } }]
-          },
-          Email: {
-            email: email
-          },
-          Service: {
-            rich_text: [{ text: { content: service } }]
-          },
-          Contact: {
-            rich_text: [{ text: { content: contact || '' } }]
-          },
-          Language: {
-            rich_text: [{ text: { content: lang || 'zh' } }]
-          },
-          JoinedAt: {
-            date: { start: new Date().toISOString() }
+            title: [{ text: { content: `${name} | ${email} | ${service} | ${contact || ''} | ${lang || 'zh'}` } }]
           }
         }
       })
@@ -47,7 +32,7 @@ export default async function handler(req, res) {
 
     if (!response.ok) {
       const err = await response.json();
-      console.error('Notion error:', err);
+      console.error('Notion error:', JSON.stringify(err));
       return res.status(500).json({ error: 'Notion API error', detail: err });
     }
 
