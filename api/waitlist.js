@@ -7,12 +7,27 @@ export default async function handler(req, res) {
   if (req.method !== 'POST') return res.status(405).json({ error: 'Method not allowed' });
 
   const { name, email, service, contact, lang } = req.body;
-
   if (!name || !email || !service) {
     return res.status(400).json({ error: 'Missing required fields' });
   }
 
   try {
+    // First, get the database to find the actual title property name
+    const dbRes = await fetch(`https://api.notion.com/v1/databases/${process.env.NOTION_DB_ID}`, {
+      headers: {
+        'Authorization': `Bearer ${process.env.NOTION_TOKEN}`,
+        'Notion-Version': '2022-06-28',
+      }
+    });
+    const db = await dbRes.json();
+    
+    // Find the title property name
+    const titleProp = Object.entries(db.properties).find(([k, v]) => v.type === 'title');
+    const titleKey = titleProp ? titleProp[0] : 'Name';
+    
+    console.log('Title property key:', titleKey);
+    console.log('All properties:', Object.keys(db.properties));
+
     const response = await fetch('https://api.notion.com/v1/pages', {
       method: 'POST',
       headers: {
@@ -23,7 +38,7 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         parent: { database_id: process.env.NOTION_DB_ID },
         properties: {
-          Name: {
+          [titleKey]: {
             title: [{ text: { content: `${name} | ${email} | ${service} | ${contact || ''} | ${lang || 'zh'}` } }]
           }
         }
