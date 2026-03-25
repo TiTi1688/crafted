@@ -26,8 +26,8 @@ export default async function handler(req, res) {
             title: [{ text: { content: name } }]
           },
           '电子邮件': {
-            rich_text: [{ text: { content: email } }]
-          },
+  email: email
+},
           'Service': {
             rich_text: [{ text: { content: service } }]
           },
