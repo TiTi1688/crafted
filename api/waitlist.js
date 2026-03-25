@@ -2,7 +2,7 @@
   title: [{ text: { content: name } }]
 },
 '电子邮件': {
-  email: email
+  rich_text: [{ text: { content: email } }]
 },
 'Service': {
   rich_text: [{ text: { content: service } }]
