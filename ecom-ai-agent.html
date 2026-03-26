@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>电商 AI 全链路智能体</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Noto+Sans+SC:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080810;
+    --surface: #0f0f1a;
+    --border: #1a1a2e;
+    --accent: #00e5ff;
+    --accent2: #ff4080;
+    --accent3: #7c3aed;
+    --green: #00ff88;
+    --text: #dde0f0;
+    --muted: #555570;
+    --card: #0d0d1a;
+    --card2: #111120;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Noto Sans SC', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(0,229,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,229,255,0.025) 1px, transparent 1px);
+    background-size: 50px 50px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .wrap { max-width: 860px; margin: 0 auto; padding: 2rem 1.5rem 4rem; position: relative; z-index: 1; }
+
+  header { text-align: center; padding: 2.5rem 0 2rem; margin-bottom: 2rem; }
+  .pill {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,229,255,0.07); border: 1px solid rgba(0,229,255,0.18);
+    color: var(--accent); font-family: 'Space Mono', monospace;
+    font-size: 0.6rem; letter-spacing: 0.18em; text-transform: uppercase;
+    padding: 0.28rem 0.8rem; border-radius: 2px; margin-bottom: 1.2rem;
+  }
+  .pill-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 1.8s ease-in-out infinite; }
+  @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.2} }
+  h1 { font-family: 'Space Mono', monospace; font-size: clamp(1.3rem, 3.5vw, 2rem); font-weight: 700; letter-spacing: -0.02em; line-height: 1.15; margin-bottom: 0.7rem; }
+  h1 em { font-style: normal; color: var(--accent); }
+  .tagline { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.05em; }
+
+  .pipeline {
+    display: grid; grid-template-columns: repeat(4, 1fr);
+    gap: 1px; background: var(--border); border: 1px solid var(--border);
+    border-radius: 4px; margin-bottom: 2rem; overflow: hidden;
+  }
+  .pipe-step { background: var(--card); padding: 1rem 0.8rem; text-align: center; position: relative; transition: background 0.2s; }
+  .pipe-step.active { background: rgba(0,229,255,0.05); }
+  .pipe-step.done { background: rgba(0,255,136,0.04); }
+  .pipe-icon { font-size: 1.2rem; margin-bottom: 0.4rem; }
+  .pipe-label { font-size: 0.65rem; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; }
+  .pipe-status { position: absolute; top: 6px; right: 6px; width: 6px; height: 6px; border-radius: 50%; background: var(--border); }
+  .pipe-step.active .pipe-status { background: var(--accent); animation: blink 1s infinite; }
+  .pipe-step.done .pipe-status { background: var(--green); animation: none; }
+
+  .input-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 1.8rem; margin-bottom: 1.5rem; }
+  .input-row { display: flex; gap: 10px; margin-bottom: 1rem; }
+  .input-row input {
+    flex: 1; background: var(--surface); border: 1px solid var(--border); border-radius: 3px;
+    color: var(--text); font-family: 'Noto Sans SC', sans-serif; font-size: 0.95rem;
+    padding: 0.75rem 1rem; outline: none; transition: border-color 0.2s;
+  }
+  .input-row input:focus { border-color: var(--accent); }
+  .input-row input::placeholder { color: var(--muted); }
+  .btn-run {
+    background: var(--accent); color: #000; border: none; border-radius: 3px;
+    font-family: 'Space Mono', monospace; font-size: 0.75rem; font-weight: 700;
+    letter-spacing: 0.08em; padding: 0 1.4rem; cursor: pointer; transition: all 0.2s; white-space: nowrap;
+  }
+  .btn-run:hover { background: #33ecff; transform: translateY(-1px); }
+  .btn-run:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  .module-toggles { display: flex; flex-wrap: wrap; gap: 8px; }
+  .toggle-chip {
+    display: flex; align-items: center; gap: 5px;
+    background: var(--surface); border: 1px solid var(--border); border-radius: 2px;
+    padding: 0.3rem 0.65rem; font-size: 0.72rem; color: var(--muted);
+    cursor: pointer; transition: all 0.15s; user-select: none;
+  }
+  .toggle-chip.on { border-color: var(--accent); color: var(--accent); background: rgba(0,229,255,0.06); }
+  .toggle-chip .dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+
+  .progress-bar-wrap { height: 2px; background: var(--border); border-radius: 1px; margin: 1.2rem 0; overflow: hidden; display: none; }
+  .progress-bar-wrap.visible { display: block; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent3)); border-radius: 1px; width: 0%; transition: width 0.4s ease; }
+
+  .output-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+  .module-card { background: var(--card); border: 1px solid var(--border); border-radius: 4px; overflow: hidden; display: none; animation: fadeIn 0.4s ease; }
+  .module-card.visible { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  .module-card.full-width { grid-column: 1 / -1; }
+
+  .mc-header { display: flex; align-items: center; gap: 8px; padding: 0.75rem 1rem; border-bottom: 1px solid var(--border); background: var(--card2); }
+  .mc-icon { font-size: 0.9rem; }
+  .mc-title { font-family: 'Space Mono', monospace; font-size: 0.65rem; letter-spacing: 0.12em; text-transform: uppercase; color: var(--accent); flex: 1; }
+  .mc-status { font-size: 0.6rem; font-family: 'Space Mono', monospace; color: var(--muted); letter-spacing: 0.08em; }
+  .mc-status.streaming { color: var(--accent); animation: blink 1s infinite; }
+  .mc-status.done { color: var(--green); animation: none; }
+  .mc-status.error { color: var(--accent2); animation: none; }
+
+  .mc-body {
+    padding: 1rem; font-size: 0.83rem; line-height: 1.75;
+    color: var(--text); white-space: pre-wrap; min-height: 80px;
+    max-height: 340px; overflow-y: auto;
+  }
+  .mc-body::-webkit-scrollbar { width: 4px; }
+  .mc-body::-webkit-scrollbar-track { background: transparent; }
+  .mc-body::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+  .loading-indicator { color: var(--muted); font-size: 0.8rem; }
+
+  .mc-footer { border-top: 1px solid var(--border); padding: 0.5rem 1rem; display: flex; justify-content: flex-end; gap: 8px; }
+  .btn-copy {
+    background: transparent; border: 1px solid var(--border); color: var(--muted);
+    font-family: 'Space Mono', monospace; font-size: 0.6rem; letter-spacing: 0.08em;
+    padding: 0.25rem 0.6rem; border-radius: 2px; cursor: pointer; transition: all 0.15s;
+  }
+  .btn-copy:hover { border-color: var(--accent); color: var(--accent); }
+  .btn-copy.copied { border-color: var(--green); color: var(--green); }
+
+  .summary-bar {
+    background: rgba(0,255,136,0.05); border: 1px solid rgba(0,255,136,0.15);
+    border-radius: 4px; padding: 1rem 1.2rem; margin-top: 1.5rem;
+    display: none; align-items: center; gap: 1rem; flex-wrap: wrap;
+  }
+  .summary-bar.visible { display: flex; }
+  .sum-item { font-size: 0.75rem; }
+  .sum-item span { color: var(--green); font-family: 'Space Mono', monospace; font-weight: 700; }
+  .btn-export {
+    margin-left: auto; background: rgba(0,255,136,0.1); border: 1px solid rgba(0,255,136,0.25);
+    color: var(--green); font-family: 'Space Mono', monospace; font-size: 0.65rem;
+    letter-spacing: 0.1em; padding: 0.4rem 1rem; border-radius: 2px; cursor: pointer; transition: all 0.2s;
+  }
+  .btn-export:hover { background: rgba(0,255,136,0.18); }
+
+  .empty-state {
+    grid-column: 1 / -1; text-align: center; padding: 3rem;
+    color: var(--muted); font-size: 0.85rem;
+    border: 1px dashed var(--border); border-radius: 4px;
+  }
+  .empty-icon { font-size: 2rem; margin-bottom: 0.8rem; opacity: 0.3; }
+
+  @media (max-width: 640px) {
+    .output-grid { grid-template-columns: 1fr; }
+    .pipeline { grid-template-columns: repeat(2, 1fr); }
+    .input-row { flex-direction: column; }
+    .btn-run { padding: 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="pill"><span class="pill-dot"></span>AI Agent · 电商全链路</div>
+    <h1>输入产品主题<br><em>AI 自动生成全套内容</em></h1>
+    <p class="tagline">社交内容 · 产品图文 · Listing · 广告文案 · 私域运营</p>
+  </header>
+
+  <div class="pipeline">
+    <div class="pipe-step" id="ps-input"><div class="pipe-status"></div><div class="pipe-icon">⌨️</div><div class="pipe-label">输入主题</div></div>
+    <div class="pipe-step" id="ps-analyze"><div class="pipe-status"></div><div class="pipe-icon">🧠</div><div class="pipe-label">AI 分析</div></div>
+    <div class="pipe-step" id="ps-generate"><div class="pipe-status"></div><div class="pipe-icon">⚡</div><div class="pipe-label">内容生成</div></div>
+    <div class="pipe-step" id="ps-output"><div class="pipe-status"></div><div class="pipe-icon">📦</div><div class="pipe-label">输出成品</div></div>
+  </div>
+
+  <div class="input-card">
+    <div class="input-row">
+      <input type="text" id="topic-input" placeholder="输入产品主题，例如：防晒冰袖、猫咪自动饮水机、便携式颈椎按摩仪…" />
+      <button class="btn-run" id="btn-run" onclick="runAgent()">▶ 开始生成</button>
+    </div>
+    <div class="module-toggles" id="module-toggles"></div>
+  </div>
+
+  <div class="progress-bar-wrap" id="progress-wrap">
+    <div class="progress-bar" id="progress-bar"></div>
+  </div>
+
+  <div class="output-grid" id="output-grid">
+    <div class="empty-state">
+      <div class="empty-icon">🤖</div>
+      输入产品主题，点击开始生成<br>AI 将自动生成所有内容模块
+    </div>
+  </div>
+
+  <div class="summary-bar" id="summary-bar">
+    <div class="sum-item">模块完成 <span id="sum-count">0</span></div>
+    <div class="sum-item">字符总数 <span id="sum-chars">0</span></div>
+    <div class="sum-item">预计节省 <span id="sum-time">0</span> 小时</div>
+    <button class="btn-export" onclick="exportAll()">⬇ 导出全部内容</button>
+  </div>
+
+</div>
+<script>
+const MODULES = [
+  { id: 'positioning',  label: '产品定位',     icon: '🎯', full: false },
+  { id: 'title',        label: '产品标题',     icon: '📝', full: false },
+  { id: 'listing',      label: '产品 Listing', icon: '📋', full: true  },
+  { id: 'selling',      label: '卖点提炼',     icon: '💎', full: false },
+  { id: 'xiaohongshu',  label: '小红书笔记',   icon: '📱', full: false },
+  { id: 'douyin',       label: '抖音脚本',     icon: '🎬', full: false },
+  { id: 'ad_copy',      label: '广告文案',     icon: '📣', full: false },
+  { id: 'wechat',       label: '微信朋友圈',   icon: '💬', full: false },
+  { id: 'image_prompt', label: '产品图提示词', icon: '🖼️', full: false },
+  { id: 'qa',           label: '买家问答 Q&A', icon: '❓', full: false },
+  { id: 'email',        label: '营销邮件',     icon: '✉️', full: false },
+  { id: 'private',      label: '私域运营话术', icon: '🔒', full: false },
+];
+
+const PROMPTS = {
+  positioning: t => `你是电商运营专家。针对产品「${t}」，用3-5句话做精准的市场定位分析：目标人群、核心痛点、差异化优势、价格带建议。直接输出分析内容。`,
+  title: t => `你是淘宝/天猫/京东电商运营专家。为产品「${t}」生成5个高转化率的产品标题，每个不超过30字，包含核心关键词、卖点、目标人群。格式：每行一个标题，前面加序号。`,
+  listing: t => `你是亚马逊/国内电商平台的Listing优化专家。为产品「${t}」写一份完整的产品详情页文案，包含：\n1. 产品标题（含关键词）\n2. 五大卖点（Bullet Points）\n3. 产品描述（200字，情感化+功能化）\n4. 关键词标签（10个）\n直接输出内容，格式清晰。`,
+  selling: t => `你是电商产品策划师。提炼产品「${t}」的核心卖点：\n- 3个功能卖点（理性诉求）\n- 3个情感卖点（感性诉求）\n- 1句核心slogan（10字以内）\n格式简洁，每点一行。`,
+  xiaohongshu: t => `你是小红书爆款内容创作者。为产品「${t}」写一篇小红书种草笔记：\n- 标题（带emoji，吸引点击，30字内）\n- 正文（200-300字，口语化，有场景感，带emoji）\n- 标签（10个相关话题标签）\n写出真实使用感受的语气。`,
+  douyin: t => `你是抖音短视频脚本策划师。为产品「${t}」写一个60秒带货脚本：\n- 开场钩子（0-3秒）\n- 痛点引入（3-15秒）\n- 产品展示（15-45秒，3个核心功能）\n- 促单结尾（45-60秒，价格+限时）\n格式：时间轴+旁白+动作提示。`,
+  ad_copy: t => `你是数字广告文案专家。为产品「${t}」写3组广告文案：\n1. 信息流广告（标题20字+描述50字）\n2. 搜索广告（标题15字+2行描述各20字）\n3. 朋友圈广告（主标题+副标题+行动按钮）\n每组清晰标注。`,
+  wechat: t => `你是微信营销专家。为产品「${t}」写5条朋友圈文案（不同风格）：\n1. 场景故事型\n2. 数据对比型\n3. 用户证言型\n4. 限时促销型\n5. 知识科普型\n每条100字以内，带1-3个emoji。`,
+  image_prompt: t => `你是AI绘图提示词专家。为产品「${t}」生成5组产品摄影提示词（适用于Midjourney/DALL-E）：\n1. 白底主图\n2. 生活场景图\n3. 细节特写图\n4. 对比效果图\n5. 社交媒体方图\n每组用英文输出，格式：[描述], [风格], [光线], [构图], --ar 1:1`,
+  qa: t => `你是电商客服专家。为产品「${t}」预设10组高频买家问答（Q&A），涵盖：材质/功效/使用方法/适用人群/售后/对比竞品。格式：Q：问题\nA：回答（50字内）`,
+  email: t => `你是邮件营销专家。为产品「${t}」写一封营销邮件：\n- 主题行（30字内）\n- 预览文字（20字）\n- 正文（问候+痛点+产品+社会证明+CTA，300字）\n- CTA按钮文字\n输出完整邮件内容。`,
+  private: t => `你是私域运营专家。为产品「${t}」设计私域运营话术包：\n1. 加微信欢迎语（50字）\n2. 产品种草话术（100字）\n3. 跟进未购买客户话术（80字）\n4. 老客复购话术（80字）\n5. 催付款话术（50字）\n每条自然口语化，有温度感。`,
+};
+
+let selectedModules = new Set(MODULES.map(m => m.id));
+let results = {};
+let isRunning = false;
+
+function initToggles() {
+  const wrap = document.getElementById('module-toggles');
+  MODULES.forEach(m => {
+    const chip = document.createElement('div');
+    chip.className = 'toggle-chip on';
+    chip.dataset.id = m.id;
+    chip.innerHTML = `<span class="dot"></span>${m.icon} ${m.label}`;
+    chip.onclick = () => {
+      if (selectedModules.has(m.id)) { selectedModules.delete(m.id); chip.classList.remove('on'); }
+      else { selectedModules.add(m.id); chip.classList.add('on'); }
+    };
+    wrap.appendChild(chip);
+  });
+}
+
+function setPipeStep(step) {
+  const steps = ['input','analyze','generate','output'];
+  const idx = steps.indexOf(step);
+  steps.forEach((s, i) => {
+    const el = document.getElementById(`ps-${s}`);
+    el.classList.remove('active','done');
+    if (i < idx) el.classList.add('done');
+    else if (i === idx) el.classList.add('active');
+  });
+}
+
+function setProgress(pct) {
+  document.getElementById('progress-bar').style.width = pct + '%';
+}
+
+async function callClaude(prompt) {
+  const res = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: prompt }]
+    })
+  });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
+  const data = await res.json();
+  return data.content?.[0]?.text || '';
+}
+
+// Fun loading messages per module
+const LOADING_MSGS = {
+  positioning: ['🧠 分析目标人群...', '🔍 研究市场定位...', '💡 提炼差异化优势...'],
+  title:        ['✍️ 构思标题关键词...', '🔥 优化点击率...', '📊 匹配搜索算法...'],
+  listing:      ['📋 撰写产品描述...', '⭐ 提炼五大卖点...', '🔑 布局核心关键词...'],
+  selling:      ['💎 挖掘核心价值...', '❤️ 构建情感共鸣...', '✨ 打磨产品slogan...'],
+  xiaohongshu:  ['📱 研究爆款结构...', '🌸 添加种草语气...', '# 匹配热门话题...'],
+  douyin:       ['🎬 设计开场钩子...', '🎯 规划痛点场景...', '⏱️ 优化60秒节奏...'],
+  ad_copy:      ['📣 测试广告角度...', '💰 优化转化话术...', '🎨 调整信息密度...'],
+  wechat:       ['💬 构思朋友圈场景...', '😊 调整口语风格...', '✅ 打磨促单结尾...'],
+  image_prompt: ['🖼️ 规划拍摄场景...', '🎨 设计视觉风格...', '✨ 优化提示词精度...'],
+  qa:           ['❓ 收集高频问题...', '💬 模拟买家疑虑...', '✅ 撰写专业回答...'],
+  email:        ['✉️ 优化邮件主题行...', '📝 构建邮件结构...', '🚀 打磨行动号召...'],
+  private:      ['🔒 设计欢迎话术...', '💌 优化跟进节奏...', '🎁 调整复购文案...'],
+};
+
+// Typewriter effect
+async function typewriter(el, text, speed = 8) {
+  el.textContent = '';
+  for (let i = 0; i < text.length; i++) {
+    el.textContent += text[i];
+    if (i % 3 === 0) await new Promise(r => setTimeout(r, speed));
+    // Auto scroll
+    el.scrollTop = el.scrollHeight;
+  }
+}
+
+// Rotating loading message for a card
+function startLoadingMessages(modId) {
+  const msgs = LOADING_MSGS[modId] || ['⏳ AI 正在生成中...'];
+  let i = 0;
+  const el = document.getElementById(`body-${modId}`);
+  const statusEl = document.getElementById(`status-${modId}`);
+  const timerId = setInterval(() => {
+    if (!el || el.dataset.done) { clearInterval(timerId); return; }
+    el.innerHTML = `<span class="loading-indicator">${msgs[i % msgs.length]}</span>`;
+    i++;
+    // Update elapsed time in status
+    const start = parseInt(el.dataset.start || Date.now());
+    if (!el.dataset.start) el.dataset.start = Date.now();
+    const elapsed = Math.round((Date.now() - start) / 1000);
+    if (statusEl && !el.dataset.done) {
+      statusEl.textContent = `生成中 ${elapsed}s...`;
+    }
+  }, 1200);
+  el.dataset.start = Date.now();
+  return timerId;
+}
+
+function createModuleCard(mod) {
+  const card = document.createElement('div');
+  card.className = `module-card visible${mod.full ? ' full-width' : ''}`;
+  card.id = `card-${mod.id}`;
+  card.innerHTML = `
+    <div class="mc-header">
+      <span class="mc-icon">${mod.icon}</span>
+      <span class="mc-title">${mod.label}</span>
+      <span class="mc-status streaming" id="status-${mod.id}">等待中...</span>
+    </div>
+    <div class="mc-body" id="body-${mod.id}"><span class="loading-indicator">⏳ 排队中...</span></div>
+    <div class="mc-footer">
+      <button class="btn-copy" onclick="copyModule('${mod.id}')">复制</button>
+    </div>`;
+  return card;
+}
+
+// Global timer display
+let globalTimer = null;
+let globalStart = 0;
+
+function startGlobalTimer() {
+  globalStart = Date.now();
+  const btn = document.getElementById('btn-run');
+  globalTimer = setInterval(() => {
+    const s = Math.round((Date.now() - globalStart) / 1000);
+    btn.textContent = `⏳ 生成中 ${s}s...`;
+  }, 1000);
+}
+
+function stopGlobalTimer() {
+  if (globalTimer) { clearInterval(globalTimer); globalTimer = null; }
+}
+
+async function runAgent() {
+  if (isRunning) return;
+  const topic = document.getElementById('topic-input').value.trim();
+  if (!topic) { document.getElementById('topic-input').focus(); return; }
+
+  isRunning = true;
+  results = {};
+  const btn = document.getElementById('btn-run');
+  btn.disabled = true;
+
+  const grid = document.getElementById('output-grid');
+  grid.innerHTML = '';
+  document.getElementById('summary-bar').classList.remove('visible');
+  document.getElementById('progress-wrap').classList.add('visible');
+  setProgress(5);
+  setPipeStep('analyze');
+
+  const activeModules = MODULES.filter(m => selectedModules.has(m.id));
+  activeModules.forEach(mod => grid.appendChild(createModuleCard(mod)));
+
+  setProgress(10);
+  setPipeStep('generate');
+  startGlobalTimer();
+
+  let completed = 0;
+  const total = activeModules.length;
+  const timers = {};
+
+  await Promise.all(activeModules.map(async (mod, idx) => {
+    // Stagger start
+    await new Promise(r => setTimeout(r, idx * 200));
+
+    // Start rotating loading messages
+    timers[mod.id] = startLoadingMessages(mod.id);
+
+    try {
+      const text = await callClaude(PROMPTS[mod.id](topic));
+      results[mod.id] = text;
+
+      // Stop loading messages
+      clearInterval(timers[mod.id]);
+      const bodyEl = document.getElementById(`body-${mod.id}`);
+      bodyEl.dataset.done = '1';
+
+      // Typewriter reveal
+      const elapsed = Math.round((Date.now() - parseInt(bodyEl.dataset.start || Date.now())) / 1000);
+      document.getElementById(`status-${mod.id}`).textContent = `完成 ✓ (${elapsed}s)`;
+      document.getElementById(`status-${mod.id}`).className = 'mc-status done';
+      await typewriter(bodyEl, text);
+
+    } catch (err) {
+      clearInterval(timers[mod.id]);
+      const bodyEl = document.getElementById(`body-${mod.id}`);
+      bodyEl.dataset.done = '1';
+      bodyEl.textContent = `生成失败：${err.message}`;
+      document.getElementById(`status-${mod.id}`).textContent = '失败';
+      document.getElementById(`status-${mod.id}`).className = 'mc-status error';
+    }
+
+    completed++;
+    setProgress(10 + (completed / total) * 85);
+  }));
+
+  stopGlobalTimer();
+  setProgress(100);
+  setPipeStep('output');
+
+  const totalTime = Math.round((Date.now() - globalStart) / 1000);
+  const totalChars = Object.values(results).join('').length;
+  document.getElementById('sum-count').textContent = completed;
+  document.getElementById('sum-chars').textContent = totalChars.toLocaleString();
+  document.getElementById('sum-time').textContent = Math.round(activeModules.length * 0.5 * 10) / 10;
+  document.getElementById('summary-bar').classList.add('visible');
+
+  btn.disabled = false;
+  btn.textContent = `▶ 重新生成（上次 ${totalTime}s）`;
+  isRunning = false;
+
+  setTimeout(() => {
+    document.getElementById('progress-wrap').classList.remove('visible');
+    setProgress(0);
+  }, 1500);
+}
+
+function copyModule(id) {
+  const text = results[id] || '';
+  if (!text) return;
+  navigator.clipboard.writeText(text).then(() => {
+    const btn = document.querySelector(`#card-${id} .btn-copy`);
+    if (btn) { btn.textContent = '已复制 ✓'; btn.classList.add('copied'); setTimeout(() => { btn.textContent = '复制'; btn.classList.remove('copied'); }, 2000); }
+  });
+}
+
+function exportAll() {
+  const topic = document.getElementById('topic-input').value.trim();
+  let content = `电商 AI 全链路内容包\n产品主题：${topic}\n生成时间：${new Date().toLocaleString()}\n${'='.repeat(50)}\n\n`;
+  MODULES.forEach(mod => {
+    if (results[mod.id]) content += `【${mod.icon} ${mod.label}】\n${results[mod.id]}\n\n${'─'.repeat(40)}\n\n`;
+  });
+  const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob);
+  a.download = `${topic}-电商内容包.txt`; a.click();
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  initToggles();
+  document.getElementById('topic-input').addEventListener('keydown', e => { if (e.key === 'Enter') runAgent(); });
+});
+</script>
+</body>
+</html>
