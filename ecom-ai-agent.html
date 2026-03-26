@@ -279,6 +279,7 @@ async function callClaude(prompt) {
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const data = await res.json();
+  if (data.error) throw new Error(JSON.stringify(data.error));
   return data.text || '';
 }
 
